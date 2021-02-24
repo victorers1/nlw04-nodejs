@@ -1,9 +1,7 @@
 import 'reflect-metadata';
 import express from 'express';
 import './database';
-
-const app = express();
-
+import { router } from './routes';
 
 /**
  * GET => Busca
@@ -12,15 +10,9 @@ const app = express();
  * DELETE => Deletar
  * PATCH => Alteração específica
  */
+const app = express();
 
-// localhost:3333/users
-app.get('/', (request, response) => {
-    // return response.send('Hello world - NLW04');
-    return response.json({ message: 'Hello world - NLW04' });
-});
-
-app.post('/', (request, response) => {
-    return response.json({ message: 'Os dados foram salvos com sucesso!' });
-});
+app.use(express.json());
+app.use(router);
 
 app.listen(3333, () => console.log('server is runing!'));
