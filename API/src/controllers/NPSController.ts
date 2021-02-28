@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { getCustomRepository, IsNull, Not } from "typeorm";
 import { SurveysUsersRepository } from "../repositories/SurveysUsersRepository";
 
+
 class NpsController {
     /**
      * 1 2 3 4 5 6 7 8 9 10
@@ -18,6 +19,7 @@ class NpsController {
             survey_id,
             value: Not(IsNull())
         });
+        const totalAnswers = surveysUsers.length;
         const detractor = surveysUsers.filter(
             (survey) => survey.value >= 0 && survey.value <= 6
         ).length;
@@ -28,14 +30,13 @@ class NpsController {
             (survey) => survey.value >= 9 && survey.value <= 10
         ).length;
 
-        const nps = Number(((promoters - detractor) / surveysUsers.length * 100).toFixed(2));
-
+        const nps = Number(((promoters - detractor) / totalAnswers * 100).toFixed(2));
 
         return response.json({
             detractor,
             promoters,
             passive,
-            totalAnwers: surveysUsers.length,
+            totalAnwers: totalAnswers,
             nps
         });
 

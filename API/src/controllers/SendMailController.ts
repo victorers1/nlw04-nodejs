@@ -8,6 +8,7 @@ import { resolve } from 'path';
 import { User } from '../models/User';
 import { Survey } from '../models/Survey';
 import { SurveyUser } from '../models/SurveyUser';
+import { AppError } from '../errors/AppError';
 
 class SendMailController {
     async execute(request: Request, response: Response) {
@@ -20,16 +21,12 @@ class SendMailController {
 
         const user: User = await usersRepository.findOne({ email });
         if (!user) {
-            return response.status(400).json({
-                error: 'User does not exit',
-            });
+            throw new AppError('User does not exists');
         }
 
         const survey: Survey = await surveysRepository.findOne({ id: survey_id });
         if (!survey) {
-            return response.status(400).json({
-                error: 'Survey does not exist'
-            });
+            throw new AppError('Survey does not exist');
         }
 
         const variables = {
@@ -62,9 +59,6 @@ class SendMailController {
         await SendMailService.execute(email, survey.title, variables, npsPath);
         return response.json(surveyUser);
     }
-
-
-
 }
 
 export { SendMailController };
